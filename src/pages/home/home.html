@@ -1,0 +1,31 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title style="color: white; text-align: center;">
+        <img alt="logo" class="logoImage" src="assets/img/logo.png" >
+    </ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+  <div class="sectionHeader">
+    <h2>Bienvenido {{ currentUser.asesor.nombre }}</h2>
+  </div>
+
+  <div class="contentXd" style="padding: 15px; font-size: 20px;">
+    <ion-icon name="man" style="font-size: 17px; margin-right: 5px;"></ion-icon>Tienes {{cantidadToday}} visitas para hoy</div>
+  <div class="contentXd" style="padding: 15px; font-size: 20px;">
+    <ion-icon name="man" style="font-size: 17px; margin-right: 5px;"></ion-icon>Tienes {{cantidadTomorrow}} visitas para mañana</div>
+
+  <h4 style="margin-bottom:20px;">Contactos agendados para hoy</h4>
+  <ion-card *ngFor="let e of list" (tap)="goToDetail({id: e.codigo, name: e.nombre})">
+    <ion-card-header>
+      <span style="font-size: 18px; color: black; margin-top:3px;">{{e.codigo}} | {{e.nombre}}</span>
+    </ion-card-header>
+    <ion-card-content>
+      {{ e.direccion }}
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

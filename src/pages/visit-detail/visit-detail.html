@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar>
+    <img alt="logo" class="logoImage" src="assets/img/logo.png">
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <div class="sectionHeader">
+    <h2 style="text-align:center;">{{toVisit.title}}</h2>
+  </div>
+
+    <ion-item style="background:white;">
+        <ion-label stacked>Nombre y apellido</ion-label>
+        <ion-input class="capitalize" disabled="true" style="color: black;" type="text" value="{{toVisit.nombre}}">
+        </ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+        <ion-label stacked>Dirección</ion-label>
+        <ion-input class="capitalize" disabled="true" style="color: black;" type="text" value="{{toVisit.direccion}}">
+        </ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+        <ion-label stacked>Horario</ion-label>
+        <ion-input class="capitalize" disabled="true" style="color: black;" type="text" value="{{toVisit.horario}}">
+        </ion-input>
+    </ion-item>
+
+  <ion-footer>
+    <img src="assets/img/map.png" alt="">
+  </ion-footer>
+
+</ion-content>

@@ -1,0 +1,25 @@
+<ion-header>
+
+  <ion-navbar>
+    <img alt="logo" class="logoImage" src="assets/img/logo.png">
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <h3 style="text-align:center; background: #fed766; width: 80%; margin: 0 auto; padding: 5px; position: relative;
+  top: 10px;">{{data}}</h3>
+
+  <ion-list style="padding: 10px;">
+
+    <ion-item style="background:white;" *ngFor="let prop of inputBuilder">
+      <ion-label class="capitalize" stacked>{{prop.key}}</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{prop.value}}"></ion-input>
+    </ion-item>
+
+
+
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,40 @@
+<ion-header #headme>
+
+  <ion-navbar>
+      <ion-title style="color: white;">          
+          <img alt="logo" class="logoImage" src="assets/img/logo.png" >
+      </ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <h2>Ingrese sus credenciales</h2>
+  <form [formGroup]="login" (ngSubmit)="logIn()">
+    <ion-item>
+      <ion-label>Usuario</ion-label>
+      <ion-input type="text" 
+                 formControlName="username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input type="password" 
+                 formControlName="password"></ion-input>
+    </ion-item>
+    <button ion-button
+            full
+            class="login-button"
+            type="submit"
+            style="margin-top: 30px;
+            font-size: 14px;" 
+            [disabled]="!login.valid">
+      Ingreso de registración
+    </button>  
+  </form>
+  <ion-footer>
+      <div style="background:#fed766; padding: 10px; color: black;">
+          Procuratio® | Soporte Técnico: (011) 4768-0500 | soporte@procuratiosoftware.com
+      </div>
+  </ion-footer>
+</ion-content>

@@ -1,0 +1,129 @@
+// http://ionicframework.com/docs/v2/theming/
+
+
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+.lbUser {
+    width: 90%;
+    border-top: 1px solid black;
+    padding: 15px;
+    margin: 10px;
+    font-size: 17px;
+}
+
+.logoImage {
+    height: 50px !important;
+    text-align: center;
+}
+
+ion-page {
+    background: red !important;
+}
+
+ion-content {
+   color: #000 !important;
+   font-family: 'Barlow', sans-serif;
+}
+
+ion-navbar.toolbar {
+    text-align: center;
+}
+
+ion-card {
+    color: #000 !important;
+    font-family: 'Barlow', sans-serif;
+
+    span {
+        color: black;
+    }
+ }
+
+.monthview-selected {
+    background: #00A3AA !important;
+}
+
+.sectionTitle {
+    margin: 10px !important;
+}
+
+.sectionHeader {
+    margin-bottom: 15px;
+}
+
+.contentXd {
+    background: #eff1f3;
+    font-size: 16px !important;
+    width: 93%;
+    margin: 0 auto;
+    margin-bottom: 2px;
+}
+
+.tabs-md .tab-button[aria-selected="true"] {
+    color: black;
+}
+
+.tabs-md .tab-button[aria-selected="true"] .tab-button-icon {
+    color: #00A3AA;
+}
+
+.monthview-container {
+    margin-top: -20px;
+    padding: 5px;
+}
+
+
+.toolbar-background {
+    background: #009fa5;
+}
+
+.login-button {
+    background:#272727;
+}
+
+.card {
+    background: #fed766 !important;
+
+}
+
+.item-md {
+    background: #eff1f3;
+}
+
+ion-card-header {
+    color: white !important;
+}
+
+.tabbar.show-tabbar {
+    background: #eff1f3 !important;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.center {
+    text-align: center;
+}
+
+.back-button.show-back-button {
+    // display: none;
+    color: white;
+    position: fixed;
+}
+
+.item-label-stacked .text-input-md, .item-label-floating .text-input-md {
+    color: black;
+    font-weight: bold;
+}

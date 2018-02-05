@@ -1,0 +1,27 @@
+<ion-header>
+    
+        <ion-navbar>
+                <img alt="logo" class="logoImage"  src="assets/img/logo.png" >
+            </ion-navbar>
+    
+    </ion-header>
+    
+    <ion-content>
+    
+        <form [formGroup]="budget" (ngSubmit)="filter()">
+            <ion-item>
+              <ion-label>Busca por letra</ion-label>
+              <ion-input type="text" 
+                         formControlName="filter"></ion-input>
+            </ion-item>
+            
+        </form>
+                    
+        
+        <ion-list inset>
+            
+        </ion-list>
+        
+    </ion-content>
+    
+    
