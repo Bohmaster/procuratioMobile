@@ -57,7 +57,7 @@ export class TabsPage {
 
   public transition(e):void {    
     let options: NativeTransitionOptions = {
-     direction:this.getAnimationDirection(e.index),
+     direction: 'up',
      duration: 250,
      slowdownfactor: -1,
      slidePixels: 0,

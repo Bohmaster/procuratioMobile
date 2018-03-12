@@ -1,7 +1,7 @@
 import { BASE_URL } from "./../../shared/sdk/lb.config";
 import { NativeStorage } from "@ionic-native/native-storage";
 import { Component, NgZone } from "@angular/core";
-import { NavController, ToastController } from "ionic-angular";
+import { NavController, ToastController, LoadingController, Events, App } from "ionic-angular";
 import { Validators, FormBuilder, FormGroup } from "@angular/forms";
 import { HttpClient, HttpParams } from "@angular/common/http";
 
@@ -11,6 +11,7 @@ import { UserApi } from "../../shared/sdk/services/custom/User";
 import { LoopBackConfig } from "../../shared/sdk";
 import { User, AccessToken } from "../../shared/sdk/models";
 import { MainPage } from "../pages";
+import { TabsPage } from "../tabs/tabs";
 
 import { Device } from "@ionic-native/device";
 // import { NativeStorage } from '@ionic-native/native-storage';
@@ -30,15 +31,19 @@ export class LoginCustomPage {
 
   public uuid;
   public deviceInfo: any = "Devicess";
+  private userId;
 
   constructor(
     public nav: NavController,
     public toast: ToastController,
+    private spinner: LoadingController,
     private userService: UserApi,
     private formBuilder: FormBuilder,
     private nativeStorage: NativeStorage,
     private zone: NgZone,
     private http: HttpClient,
+    private events: Events,
+    private app: App,
     // private ns: NativeStorage,
 
     public device: Device
@@ -48,6 +53,8 @@ export class LoginCustomPage {
       password: [""],
       uuid: [this.device.uuid]
     });
+
+    this.checkCurrentUUID();
 
     // this.nativeStorage.setItem('myitem', {property: 'value', anotherProperty: 'anotherValue'})
     //   .then(
@@ -68,11 +75,53 @@ export class LoginCustomPage {
     //       console.log('SetItem', error);
 
     //     }
-    //   );
+    //   );    
+  }
 
-    this.nativeStorage.getItem("device").then(
+  checkCurrentUUID() {
+    console.log('Running checkCurrentUUID', this.device);
+
+    let credentials = { uuid: this.device.uuid };
+    
+    if (credentials.uuid === null) {
+      console.log('crendtials null', credentials)
+    } else {
+      this.http
+      .post(`${BASE_URL}/api/proxy/handleUsers`, { credentials })
+      .subscribe((data: { response }) => {
+        console.log('RESPONSE!', data.response);
+
+        if (data.response.id) {
+          this.userId = data.response.id;
+          this.nativeStorage.setItem("currentUser", data.response).then(
+            () => {
+              console.log("Sabe currentUser");
+              this.events.publish('user:loggedIn', data.response)
+              this.nav.push(TabsPage);
+            },
+            error => {
+              console.log("CurrentUser", error);
+            }
+          );
+        }
+      })
+    }
+
+    
+      
+  }
+
+  goHome() {
+    this.nav.push(TabsPage)
+  }
+
+  ionViewWillEnter() {
+    this.nativeStorage.getItem("currentUser").then(
       data => {
-        console.log("Fetched from storage", data);
+        console.log("Fetched from storage login custom", data);
+        if (data.id) {
+          this.nav.push(TabsPage)
+        }        
       },
       error => {
         console.log("GetItem", error);
@@ -82,6 +131,12 @@ export class LoginCustomPage {
 
   logIn() {
     console.log("Loggin in with credentials: ", this.device, this.login);
+
+    let loading = this.spinner.create({
+      content: 'Cargando datos...'
+    })
+
+    loading.present()
 
     var credentials = this.login.value;
 
@@ -94,9 +149,10 @@ export class LoginCustomPage {
           let toastWindow = this.toast.create({
                     message: 'Logueado exitosamente',
                     duration: 3000,
-                    position: 'top'
+                    position: 'bottom'
                   });
           toastWindow.present();
+          loading.dismiss();
           console.log('Sabe SetItem')
           this.nativeStorage.setItem("currentUser", data.response).then(
             () => {
@@ -107,6 +163,14 @@ export class LoginCustomPage {
             }
           );
           this.nav.push(MainPage);
+        } else {
+          loading.dismiss()
+          let toastWindow = this.toast.create({
+                    message: 'Ha surgido un error. Intente nuevamente',
+                    duration: 3000,
+                    position: 'bottom'
+                  });
+          toastWindow.present()
         }
       });
 

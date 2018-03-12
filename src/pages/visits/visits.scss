@@ -1,14 +1,13 @@
 home-page {
-    ion-title {
-        color: white !important;
-    }
     ion-content {
         text-align: center;          
         
         ion-card {
-            background-color: white;
+            background-color: lightblue !important;
         }
-
-        
     }
+}
+
+[_nghost-c0] > div[_ngcontent-c0] {
+    height: auto !important;
 }

@@ -10,8 +10,11 @@ import { HttpModule, Http } from "@angular/http";
 import { HttpClientModule } from "@angular/common/http";
 import { IonicApp, IonicModule, IonicErrorHandler } from "ionic-angular";
 import { Storage, IonicStorageModule } from "@ionic/storage";
+import {BudgetList } from '../pages/budget-list/budget-list'
 
-import { enableProdMode } from "@angular/core";
+import { enableProdMode, LOCALE_ID } from "@angular/core";
+
+import { Ng2FilterPipeModule, Ng2FilterPipe } from 'ng2-filter-pipe'
 
 import { MyApp } from "./app.component";
 
@@ -42,7 +45,13 @@ import { NativeStorage } from "@ionic-native/native-storage";
 
 import { NativePageTransitions } from '@ionic-native/native-page-transitions';
 
+import { AgmCoreModule } from '@agm/core'
 
+import { CheckoutPage } from '../pages/checkout/checkout'
+import { ProxyPage } from '../pages/proxy/proxy'
+
+import { BatteryStatus } from '@ionic-native/battery-status';
+import { Geolocation } from '@ionic-native/geolocation';
 
 
 // The translate loader needs to know where to load i18n files
@@ -70,21 +79,26 @@ export function provideSettings(storage: Storage) {
   declarations: [
     MyApp,
     LoginCustomPage,
-    HomePage,
     TabsPage,
+    HomePage,
     CalendarPage,
-    VisitsPage,
-    CalendarPage,
-    BudgetPage,
     ContactPage,
+    BudgetPage,
+    VisitsPage,
     ContactsDetailPage,
-    VisitDetail
-    
+    VisitDetail,
+    BudgetList,
+    CheckoutPage,
+    ProxyPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
     HttpClientModule,
+    Ng2FilterPipeModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCK0jrU4FGv0RwUNJdS8NAnCWpLbcDbJD0'
+    }),
     SDKBrowserModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -108,7 +122,10 @@ export function provideSettings(storage: Storage) {
     BudgetPage,
     VisitsPage,
     ContactsDetailPage,
-    VisitDetail    
+    VisitDetail,
+    BudgetList,
+    CheckoutPage,
+    ProxyPage
   ],
   providers: [
     Api,
@@ -121,9 +138,12 @@ export function provideSettings(storage: Storage) {
     Device,
     NativeStorage,
     NativePageTransitions,
+    Geolocation,
+    BatteryStatus,
     { provide: Settings, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    { provide: LOCALE_ID, useValue: 'es-AR' }
   ]
 })
 export class AppModule {}

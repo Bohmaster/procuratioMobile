@@ -1,7 +1,8 @@
 <ion-header>
-
-  <ion-navbar> 
-    <img alt="logo" class="logoImage" src="assets/img/logo.png">
+    
+  <ion-navbar>
+          <img alt="logo" class="logoImage"  src="assets/img/logo.png" >
+          <ion-icon name="home" style="float: right; top: 16px; right: 5px; position:relative; font-size: 23px; color: white;" (tap)="goHome()"></ion-icon>
   </ion-navbar>
 
 </ion-header>
@@ -9,9 +10,9 @@
 <ion-content>
   <h4 style="text-align: center; text-transform: capitalize; padding: 10px;">{{toShowDate}}</h4>
   <div style="text-align:center; margin-bottom: 15px; background: #eff1f3; padding: 10px; position: relative;">
-    <span class="center" (click)="changeMonth($event, 'prev')">Anterior</span>   -
-    <span class="center" (click)="setCurrentDate($event)">   HOY</span>   -
-    <span class="center" (click)="changeMonth($event, 'next')">   Siguiente</span>
+    <span class="center" (click)="changeMonth($event, 'prev')">"<"Mes anterior</span>   
+    <span class="center" (click)="setCurrentDate($event)">   -&emsp; HOY &emsp;- </span>   
+    <span class="center" (click)="changeMonth($event, 'next')">   Mes siguiente</span>
   </div>
 
   <template #template let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
@@ -25,7 +26,7 @@
     (onTimeSelected)="onChange($event)" queryMode="remote" [monthviewEventDetailTemplate]="template" step="30">
   </calendar>
 
-  <ion-card *ngFor="let e of eventSourceFix" (tap)="goToVisit(e)">
+  <ion-card *ngFor="let e of eventSourceFix" (tap)="goToVisit(e, eventSourceFix)">
     <ion-card-header>
       <span style="font-size: 18px;">{{e.title}}</span>
     </ion-card-header>

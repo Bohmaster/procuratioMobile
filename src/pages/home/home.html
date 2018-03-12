@@ -1,9 +1,8 @@
 <ion-header>
-
+    
   <ion-navbar>
-    <ion-title style="color: white; text-align: center;">
-        <img alt="logo" class="logoImage" src="assets/img/logo.png" >
-    </ion-title>
+          <img alt="logo" class="logoImage"  src="assets/img/logo.png" >
+          <ion-icon name="home" style="float: right; top: 16px; right: 5px; position:relative; font-size: 23px; color: white;" (tap)="goHome()"></ion-icon>
   </ion-navbar>
 
 </ion-header>
@@ -19,13 +18,19 @@
     <ion-icon name="man" style="font-size: 17px; margin-right: 5px;"></ion-icon>Tienes {{cantidadTomorrow}} visitas para mañana</div>
 
   <h4 style="margin-bottom:20px;">Contactos agendados para hoy</h4>
-  <ion-card *ngFor="let e of list" (tap)="goToDetail({id: e.codigo, name: e.nombre})">
+  <ion-card *ngFor="let e of list" (tap)="goToDetail({id: e.codigo, name: e.nombre, contactoId: e.id})">
     <ion-card-header>
-      <span style="font-size: 18px; color: black; margin-top:3px;">{{e.codigo}} | {{e.nombre}}</span>
+      <span style="font-size: 18px; color: white; margin-top:3px;">{{e.codigo}} - {{e.nombre}}</span>
     </ion-card-header>
     <ion-card-content>
       {{ e.direccion }}
     </ion-card-content>
   </ion-card>
 
+
+ 
 </ion-content>
+
+<ion-footer>
+  <div style="text-align: center; position: relative; bottom: 0px; padding:15px; font-size:18px;">Su terminal: {{uuid}}</div>
+</ion-footer>

@@ -1,7 +1,7 @@
 import { MainPage } from "./../pages/pages";
 import { NativeStorage } from "@ionic-native/native-storage";
 import { Component, ViewChild, NgZone } from "@angular/core";
-import { Platform, Nav, Config, App, ToastController } from "ionic-angular";
+import { Platform, Nav, Config, App, ToastController, Events } from "ionic-angular";
 
 import { StatusBar } from "@ionic-native/status-bar";
 import { SplashScreen } from "@ionic-native/splash-screen";
@@ -24,11 +24,19 @@ import { Storage } from "@ionic/storage";
 
 import { HttpClient, HttpParams } from "@angular/common/http";
 
+import { BatteryStatus } from '@ionic-native/battery-status';
+import { Geolocation } from '@ionic-native/geolocation';
+import { TabsPage } from '../pages/tabs/tabs'
+
 @Component({
   templateUrl: "app.html"
 })
 export class MyApp {
   rootPage = FirstRunPage;
+  level: any = "init";
+  userId;
+  readyToSend = false;
+  hasPermission = false;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -46,6 +54,9 @@ export class MyApp {
     private storage: NativeStorage,
     private zone: NgZone,
     private http: HttpClient,
+    private geo: Geolocation,
+    private bat: BatteryStatus,
+    private events: Events,
     settings: Settings
   ) {
     this.initTranslate();
@@ -53,9 +64,37 @@ export class MyApp {
     LoopBackConfig.setBaseURL(BASE_URL);
     LoopBackConfig.setApiVersion(API_VERSION);
 
-    console.log("Inside App constructor");   
+    console.log("Inside App constructor");
 
-    this.checkCurrentUUID();
+    // this.checkCurrentUUID();
+    // this.sendDataToApi()
+
+    // this.events.subscribe('user:loggedIn', data => {
+    //   // console.log('SUBSCRIPTION', data, this.hasPermission)
+    //   this.readyToSend = true;
+    //   this.userId = data.id;
+    //   if (!this.hasPermission) {
+    //     this.sendDataToApi(data.id);
+    //     this.hasPermission = true;
+    //   }
+    // })
+
+    // let subscription = this.bat.onChange().subscribe(
+    //   (status) => {
+    //     // console.log('BATTERY', status)
+    //     this.level = status.level;
+    //     console.log(status.level, status.isPlugged);
+    //   }
+    // );
+
+    // setInterval(() => {
+    //   // console.log('Inside constructor send data to api', this.readyToSend, this.userId)
+    //   if (this.readyToSend) {
+    //     this.sendDataToApi(this.userId);
+    //   }
+      
+    // }, 15000)
+
 
     this.app.viewDidEnter.subscribe(view => {
       const state_name = view.instance.constructor.name;
@@ -88,33 +127,105 @@ export class MyApp {
       console.log("App Component entered. Ready");
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+      
 
-      console.log("La concha de tu madre");
+      setInterval(function() {
+        console.log('Inside ionViewDidLoad')
+        this.statusBar.styleDefault();
+        this.splashScreen.hide()
+        this.sendDataToApi(1, 'LA PUTA MADREEEEEEEEE')
+
+        this.events.subscribe('user:loggedIn', data => {
+          // console.log('SUBSCRIPTION', data, this.hasPermission)
+          this.readyToSend = true;
+          this.userId = data.id;
+          if (!this.hasPermission) {
+            this.sendDataToApi(data.id);
+            this.hasPermission = true;
+          }
+        })
+    
+        let subscription = this.bat.onChange().subscribe(
+          (status) => {
+            // console.log('BATTERY', status)
+            this.level = status.level;
+            console.log(status.level, status.isPlugged);
+          }
+        );
+    
+        setInterval(() => {
+          // console.log('Inside constructor send data to api', this.readyToSend, this.userId)
+          if (this.readyToSend) {
+            this.sendDataToApi(this.userId);
+          }
+          
+        }, 15000)
+      }, 1000)
+
+      // console.log("La concha de tu madre");
     });
   }
 
-  checkCurrentUUID() {
-    console.log('Running checkCurrentUUID');
-    let credentials = { uuid: this.device.uuid };
-    this.http
-      .post(`${BASE_URL}/api/proxy/handleUsers`, { credentials })
-      .subscribe((data: { response }) => {
-        console.log(data.response);
+  // checkCurrentUUID() {
+  //   console.log('Running checkCurrentUUID', this.device);
 
-        if (data.response.id) {
-          this.storage.setItem("currentUser", data.response).then(
-            () => {
-              console.log("Sabe currentUser");
-              this.nav.push(MainPage);              
-            },
-            error => {
-              console.log("CurrentUser", error);
-            }
-          );
-        }
-      });
+  //   let credentials = { uuid: this.device.uuid };
+  //   this.http
+  //     .post(`${BASE_URL}/api/proxy/handleUsers`, { credentials })
+  //     .subscribe((data: { response }) => {
+  //       console.log('RESPONSE!', data.response);
+
+  //       if (data.response.id) {
+  //         this.userId = data.response.id;
+  //         this.sendDataToApi()
+  //         this.storage.setItem("currentUser", data.response).then(
+  //           () => {
+  //             console.log("Sabe currentUser");
+  //             this.nav.push(TabsPage);
+  //           },
+  //           error => {
+  //             console.log("CurrentUser", error);
+  //           }
+  //         );
+  //       }
+  //     })
+      
+  // }
+
+  sendDataToApi(userId, xtra?) {
+
+    if (xtra) {
+      // console.log('XTRAAAAAAAAAAAA', xtra)
+    }
+
+    // console.log('Running sendData to API', userId, this.hasPermission, this.readyToSend)
+
+    this.geo.getCurrentPosition().then((resp) => {
+
+       console.log('resP', resp);
+       const lat = resp.coords.latitude
+       const lng = resp.coords.longitude
+
+       const stringGeo = lat + "," + lng;
+
+       const data = {
+          "salesforceid": userId,
+          "fecha": new Date(),
+          "gps": stringGeo,
+          "bateria": this.level,
+          "id": 0
+       }
+       this.http
+         .post(`${BASE_URL}/api/SalesforceMovimientos`, data)
+         .subscribe((data: { response }) => {
+          console.log('SALIO TODO PIOLA', data)
+         });
+
+    }).catch((error) => {
+      console.log('Error getting location', error);
+    });
+
+
   }
 
   initTranslate() {

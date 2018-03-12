@@ -11,6 +11,10 @@ import { Validators, FormBuilder, FormGroup } from "@angular/forms";
 
 import * as moment from "moment";
 
+import { TabsPage } from '../tabs/tabs'
+
+declare var google: any;
+
 @Component({
   selector: "budget-list-page",
   templateUrl: "budget-list.html"
@@ -34,6 +38,10 @@ export class BudgetList {
     this.contact = this.formBuilder.group({
       filter: ["", Validators.required]
     });
+  }
+
+  goHome() {
+    this.nav.push(TabsPage)
   }
 
   itemSelected(item) {

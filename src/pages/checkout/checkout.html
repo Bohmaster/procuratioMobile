@@ -1,0 +1,44 @@
+<ion-header>
+    
+  <ion-navbar>
+          <img alt="logo" class="logoImage"  src="assets/img/logo.png" >
+          <ion-icon name="home" style="float: right; top: 16px; right: 5px; position:relative; font-size: 23px; color: white;" (tap)="goHome()"></ion-icon>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content style="text-align: center">
+  <div class="" style="padding: 5px; font-size: 15px; background: #D3D3D3"><h5 style="text-align:center; width: 80%; margin: 0 auto; padding: 5px; position: relative;
+  ">({{item.horario}}) {{item.direccion}}</h5></div>
+
+  <div class="sectionHeader" style="">
+    <ion-item *ngFor="let q of questions">
+      <ion-label>{{q.titulo}}</ion-label>
+      <ion-select (ionChange)="getMagic($event)">
+        <ion-option *ngFor="let r of q.answers" value="{{r.titulo}},{{r.id}},{{q.id}}">{{r.titulo}}</ion-option>
+      </ion-select>
+    </ion-item>
+    
+  </div>
+  <button ion-button
+            *ngIf="!done"
+            (tap)="doCheckout()"
+            class="login-button"
+            type="submit"
+            style="background: #006D72; color: white;
+            font-size: 14px; width: 60%; margin-bottom: 20px; padding: 15px" 
+            >
+      HACER CHECKOUT
+    </button>
+    
+    <button ion-button
+            *ngIf="done"
+            (tap)="wtf()"
+            class="login-button"
+            type="submit"
+            style="font-size: 14px; margin-bottom: 20px; width: 60%; padding: 15px" 
+            >
+      PASAR A PROXIMA VISITA
+    </button>  
+
+</ion-content>

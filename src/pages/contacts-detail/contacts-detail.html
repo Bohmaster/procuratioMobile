@@ -1,23 +1,49 @@
 <ion-header>
-
+    
   <ion-navbar>
-    <img alt="logo" class="logoImage" src="assets/img/logo.png">
+          <img alt="logo" class="logoImage"  src="assets/img/logo.png" >
+          <ion-icon name="home" style="float: right; top: 16px; right: 5px; position:relative; font-size: 23px; color: white;" (tap)="goHome()"></ion-icon>
   </ion-navbar>
 
 </ion-header>
 
 <ion-content>
 
-  <h3 style="text-align:center; background: #fed766; width: 80%; margin: 0 auto; padding: 5px; position: relative;
+  <h3 style="text-align:center; width: 80%; margin: 0 auto; padding: 5px; position: relative;
   top: 10px;">{{data}}</h3>
 
   <ion-list style="padding: 10px;">
 
-    <ion-item style="background:white;" *ngFor="let prop of inputBuilder">
-      <ion-label class="capitalize" stacked>{{prop.key}}</ion-label>
-      <ion-input disabled="true" style="color: black;" type="text" value="{{prop.value}}"></ion-input>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Nombre</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.nombre}}"></ion-input>
     </ion-item>
-
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Apellido</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.apellido}}"></ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Domicilio</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.domicilio}}"></ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Entre calles</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.entrecalle}}"></ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Localidad</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.localidad_nombre}}"></ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Provincia</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.provincia_nombre}}"></ion-input>
+    </ion-item>
+    <ion-item style="background:white;">
+      <ion-label class="capitalize" stacked>Telefono</ion-label>
+      <ion-input disabled="true" style="color: black;" type="text" value="{{contacto.telefono}}"></ion-input>
+    </ion-item>
+    
+    
 
 
   </ion-list>

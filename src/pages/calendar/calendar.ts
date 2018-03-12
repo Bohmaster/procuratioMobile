@@ -2,13 +2,14 @@ import { Component, ViewChild } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Http, RequestOptions, URLSearchParams } from "@angular/http";
 
-import { NavController, ToastController, App } from "ionic-angular";
+import { NavController, ToastController, App, LoadingController } from "ionic-angular";
+import { NativeStorage } from "@ionic-native/native-storage";
 
 import { LoopBackConfig, BASE_URL, API_VERSION } from "../../shared/sdk";
 
 import * as moment from "moment";
-import { NativeStorage } from "@ionic-native/native-storage";
 import { VisitDetail } from "../visit-detail/visit-detail";
+import { TabsPage } from '../tabs/tabs'
 
 @Component({
   selector: "calendar-page",
@@ -56,7 +57,9 @@ export class CalendarPage {
     private toast: ToastController,
     private http: HttpClient,
     private nativeStorage: NativeStorage,
-    private app: App
+    private app: App,
+    private spinner: LoadingController,
+    private storage: NativeStorage
   ) {
     console.log("CalendarPage mounted");
     // this.nativeStorage.getItem("currentUser").then(
@@ -69,41 +72,44 @@ export class CalendarPage {
     //     console.log("CurrentUser", error);
     //   }
     // );
-    this.loadEvents(false);
+    console.log('Running inside constructor loadEvents()')
+    // this.loadEvents(false);
   }
-
-  asesorId = 34;
 
   calendar = {
     mode: "month",
     currentDate: new Date(),
     dateFormatter: {
-      formatMonthViewDay: function(date: Date) {
+      formatMonthViewDay: function (date: Date) {
         return date.getDate().toString();
       },
-      formatMonthViewDayHeader: function(date: Date) {
+      formatMonthViewDayHeader: function (date: Date) {
         return "MonMH";
       },
-      formatMonthViewTitle: function(date: Date) {
+      formatMonthViewTitle: function (date: Date) {
         return "testMT";
       },
-      formatWeekViewDayHeader: function(date: Date) {
+      formatWeekViewDayHeader: function (date: Date) {
         return "MonWH";
       },
-      formatWeekViewTitle: function(date: Date) {
+      formatWeekViewTitle: function (date: Date) {
         return "testWT";
       },
-      formatWeekViewHourColumn: function(date: Date) {
+      formatWeekViewHourColumn: function (date: Date) {
         return "testWH";
       },
-      formatDayViewHourColumn: function(date: Date) {
+      formatDayViewHourColumn: function (date: Date) {
         return "testDH";
       },
-      formatDayViewTitle: function(date: Date) {
+      formatDayViewTitle: function (date: Date) {
         return "testDT";
       }
     }
   };
+
+  goHome() {
+    this.nav.push(TabsPage)
+  }
 
   changeMonth(event, type) {
     console.log(event);
@@ -129,31 +135,54 @@ export class CalendarPage {
     console.log('JAJAJAJA?')
   }
 
+  ionViewDidEnter() {
+    console.log('About to load, VisitsComponent');
+    this.loadEvents(false);
+  }
+
   setCurrentDate(event) {
     this.calendar.currentDate = new Date();
     this.toShowDate = this.calendar.currentDate.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    
   }
 
   loadEvents(day?) {
+    let loading = this.spinner.create({
+      content: 'Cargando datos...'
+    })
+
+    loading.present()
     if (!day) {
-      day = new Date().toISOString().slice(0, 10).replace('T', ' ');
+      var merca = new Date().toISOString().slice(0, 10).replace('T', ' ');
+      day = new Date().toLocaleDateString().slice(0, 10).replace('T', ' ');
+      console.log(day, merca);
     }
+
+    console.log('EL DIA ES', day, new Date().toLocaleDateString());
 
     let events = [];
 
-    console.log("Running loadEvents()");
-    const args = {
-      asesorId: 113,
-      selectedDay: day
-    }
-    this.http
-      .post(`${BASE_URL}/api/proxy/fillCalendar`, {args})
-      .subscribe((data: { response }) => {   
-        this.eventSourceFix = data.response;
-        this.defaultEvents = "Se han encontrado " + data.response.length + " eventos";
-        console.log(this.eventSourceFix);
-      });
+    this.storage.getItem("currentUser").then(
+      user => {
+        console.log("Running loadEvents()");
+        const args = {
+          asesorId: user.asesor.id,
+          selectedDay: day
+        }
+        console.log(args);
+        this.http
+          .post(`${BASE_URL}/api/proxy/fillCalendar`, { args })
+          .subscribe((data: { response }) => {
+            this.eventSourceFix = data.response;
+            this.defaultEvents = "Se han encontrado " + data.response.length + " eventos";
+            console.log(this.eventSourceFix);
+            loading.dismiss()
+          });
+      },
+      error => {
+        console.log("CurrentUser", error);
+      }
+    );
+
   }
 
   onViewTitleChanged(title) {
@@ -163,11 +192,11 @@ export class CalendarPage {
   onEventSelected(event) {
     console.log(
       "Event selected:" +
-        event.startTime +
-        "-" +
-        event.endTime +
-        "," +
-        event.title
+      event.startTime +
+      "-" +
+      event.endTime +
+      "," +
+      event.title
     );
   }
 
@@ -184,11 +213,11 @@ export class CalendarPage {
     const formattedDay = ev.selectedTime.toISOString().slice(0, 10).replace('T', ' ');
     console.log(
       "Selected times: " +
-        ev.selectedTime.toISOString().slice(0, 10).replace('T', ' ') +
-        ", hasEvents: " +
-        (ev.events !== undefined && ev.events.length !== 0) +
-        ", disabled: " +
-        ev.disabled
+      ev.selectedTime.toISOString().slice(0, 10).replace('T', ' ') +
+      ", hasEvents: " +
+      (ev.events !== undefined && ev.events.length !== 0) +
+      ", disabled: " +
+      ev.disabled
     );
     this.loadEvents(formattedDay)
   }
@@ -205,14 +234,18 @@ export class CalendarPage {
     event.setHours(0, 0, 0, 0);
     this.isToday = today.getTime() === event.getTime();
     console.log(event);
-    this.toShowDate = event.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })   
+    this.toShowDate = event.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
     this.loadEvents(event.toISOString().slice(0, 10).replace('T', ' '));
-   
+
   }
 
-  goToVisit(e) {
+  goToVisit(e, source) {
+    e.visit = false;
     if (e) {
-      this.app.getRootNav().push(VisitDetail, e);
+      this.app.getRootNav().push(VisitDetail, {
+        element: e,
+        source: source
+      });
     }
   }
 
@@ -250,22 +283,22 @@ export class CalendarPage {
   //         allDay: true
   //       });
   //     } else {
-        // var startMinute = Math.floor(Math.random() * 24 * 60);
-        // var endMinute = Math.floor(Math.random() * 180) + startMinute;
-        // startTime = new Date(
-        //   date.getFullYear(),
-        //   date.getMonth(),
-        //   date.getDate() + startDay,
-        //   0,
-        //   date.getMinutes() + startMinute
-        // );
-        // endTime = new Date(
-        //   date.getFullYear(),
-        //   date.getMonth(),
-        //   date.getDate() + endDay,
-        //   0,
-        //   date.getMinutes() + endMinute
-        // );
+  // var startMinute = Math.floor(Math.random() * 24 * 60);
+  // var endMinute = Math.floor(Math.random() * 180) + startMinute;
+  // startTime = new Date(
+  //   date.getFullYear(),
+  //   date.getMonth(),
+  //   date.getDate() + startDay,
+  //   0,
+  //   date.getMinutes() + startMinute
+  // );
+  // endTime = new Date(
+  //   date.getFullYear(),
+  //   date.getMonth(),
+  //   date.getDate() + endDay,
+  //   0,
+  //   date.getMinutes() + endMinute
+  // );
   //       events.push({
   //         title: "Event - " + i,
   //         startTime: startTime,
